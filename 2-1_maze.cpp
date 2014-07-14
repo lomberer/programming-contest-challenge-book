@@ -74,23 +74,54 @@ typedef pair<int, int> P;
 
 int bfs() {
   queue<P> que;
-  // スタート地点をqueにpush
+  // スタート地点をキューにpush
   que.push(P(sx, sy));
+  // スタート地点の距離を0に
+  d[sy][sx] = 0;
 
   // queが空になるまで
   while(!que.empty()) {
-    P p = que.front(); que.pop(); 
+    P p = que.front(); que.pop();
+
+    // 上下左右を探索
+    for(int dx = -1; dx <= 1; dx++) {
+      for(int dy = -1; dy <= 1; dy++) {
+
+        // 上下左右でない。
+        if( (abs(dx) + abs(dy)) != 1 ) continue;
+        
+        int nx = p.first + dx; int ny = p.second + dy;
+        
+        // 範囲外
+        if(nx < 0 || nx >= M) continue;
+        if(ny < 0 || ny >= N) continue;
+        
+        // 壁
+        if(parsedMap[ny][nx] == '#') continue;
+
+        // 探索済み
+        if(d[ny][nx] != INF) continue;
+
+        // 新たに発見した地点の距離を記録
+        d[ny][nx] = d[p.second][p.first] + 1;
+
+        // キューへ追加
+        que.push(P(nx, ny));
+      }
+    }
   }
 
-
+  // 全経路の探索終了後、ゴール地点の距離を返却。
   return d[gy][gx];
 }
 
 void solve() {
-  
+  printf("%d\n",bfs());
 }
 
 int main() {
   parseMap();
   printParsedMap();
+  setupDistance();
+  solve();
 }
