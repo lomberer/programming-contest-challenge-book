@@ -20,31 +20,34 @@ void read() {
 }
 
 void solve() {
-  for (int i = 0, j = n - 1; i < j;) {
-    bool left = true;
-
-    for (int l = i, r = j; l < r; l++, r--) {
-      if (S[l] < S[r]) break; // 左が小さい
-      if (S[l] > S[r]) { // 右が小さい
+  for (int i = 0, j = n - 1; i <= j;) {
+    bool left = true; // 左端を選択するかどうか。
+    for (int l = i, r = j; l <= r; l++, r--) {
+      if (S[l] < S[r]) break; // 左端が小さい
+      if (S[l] > S[r]) { // 右端が小さい
         left = false; break;
       }
-      // 左と右が同じ場合は次の文字を再帰的に比較
+      // 左端と右端が同じ場合は次の文字を再帰的に比較
     }
 
     // iとjから今ループ何週目かを算出
     int count = i + n - 1 - j;
-    if (left) { // 左を選択
+    if (left) { // 左端を選択
       T[count] = S[i];
       i++;      
-    } else { // 右を選択
+    } else { // 右端を選択
       T[count] = S[j];
       j--;
     }
   }
 }
 
+void print() {
+  cout << T << endl;
+}
+
 int main() {
   read();
   solve();
-  cout << T << endl;
+  print();
 }
