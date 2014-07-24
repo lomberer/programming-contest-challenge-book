@@ -6,3 +6,63 @@
 
 // 入力例: N = 3, L = {8, 5, 8}
 // 出力例: 34
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int N;
+vector<int> L;
+
+// NとLを入力から初期化。
+void read() {
+  printf("N is >> "); scanf("%d", &N);
+  printf("F are \n");
+  for (int i = 0; i < N; i++) {
+    int tmp;
+    scanf("%d", &tmp);
+    L.push_back(tmp);
+  }
+  cout << endl;
+}
+
+void print_L () {
+  for (int i = 0; i < L.size(); i++) {
+    cout << L[i] << endl;
+  }
+}
+
+// Lを昇順にソート。
+void _sort() {
+  sort(L.begin(), L.end());
+}
+
+// Lの総和。
+int total_length() {
+  int res = 0;
+  for (int i = 0; i < L.size(); i++) {
+    res += L[i];
+  }
+  return res;
+}
+
+// 解。
+int solve() {
+  int res = 0;
+  int total = total_length();
+  while(L.size() > 1) {
+    res += total;
+    int max = L.back();
+    L.pop_back();
+    total -= max;
+  }
+  return res;
+}
+
+int main() {
+  read();
+  _sort();
+  printf("%d\n", solve());
+  return 0;
+}
+
