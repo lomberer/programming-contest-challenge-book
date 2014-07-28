@@ -26,24 +26,53 @@ void read() {
   printf("W is "); scanf("%d", &W);
 }
 
-int inner_rec(int idx, int total_w, int total_v) {
+int inner_rec1(int idx, int total_w, int total_v) {
   if (idx == n) { // 終端。
     return total_v;
   }
   if (total_w + w[idx]> W) {// 選択するとWを超えてしまうのでスキップ。
-    return inner_rec(idx + 1, total_w, total_v);
+    return inner_rec1(idx + 1, total_w, total_v);
   }
   // 現在のインデックスの値を選んだ場合と、選ばなかった場合。
-  return max(inner_rec(idx + 1, total_w + w[idx], total_v + v[idx]), inner_rec(idx + 1, total_w, total_v));
+  return max(inner_rec1(idx + 1, total_w + w[idx], total_v + v[idx]), inner_rec1(idx + 1, total_w, total_v));
 }
 
-int solve() {
-  return inner_rec(0, 0, 0);
+int solve1() { // O(2^n)
+  return inner_rec1(0, 0, 0);
+}
+
+int memo[MAX_N][MAX_N];
+int inner_rec2(int i, int j) { // iはindex、jは許容可能な重さの残り。
+  int res;
+  if (memo[i][j] >= 0) {
+    res = memo[i][j];
+  }
+  if (i == n) {
+    res = 0;
+  } else if (j - w[i] < 0) {
+    res = inner_rec2(i + 1, j);
+  } else {
+    res = max(inner_rec2(i + 1, j), inner_rec2(i + 1, j - w[i]) + v[i]);
+  }
+  return memo[i][j] = res;
+}
+
+int solve2() { // memoize
+  memset(memo, -1, sizeof(memo));
+  // for (int i = 0; i < MAX_N; i++) {
+  //   for (int j = 0; j < MAX_N; j++) {
+  //     printf("%d", memo[i][j]);
+  //   }
+  //   putchar('\n');
+  // }
+  return inner_rec2(0, W);
 }
 
 int main() {
   read();
-  int ans = solve();
+  int ans;
+  // ans = solve1();
+  ans = solve2();
   printf("%d\n", ans);
   return 0;
 }
