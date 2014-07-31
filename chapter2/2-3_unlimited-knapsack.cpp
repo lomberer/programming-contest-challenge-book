@@ -27,16 +27,69 @@ void read() {
   printf("W is >> "); scanf("%d", &W);
 }
 
-int rec(int i, int rest_w) {
+////////////////////////////////////////
+// O(3^n)
+////////////////////////////////////////
+int rec1(int i, int rest_w) {
   if (i == n) return 0;
-  if (w[i] > rest_w) return rec(i + 1, rest_w); // 重量オーバーのためi番目を選ぶことができない。
-  return max(rec(i, rest_w - w[i]) + v[i], // i番目を選びもう一度i番目を選ぶか選択する。
-             max(rec(i + 1, rest_w - w[i]) + v[i], // i番目を選び次の品物へ。
-                 rec(i + 1, rest_w))); // i番目をスキップ。
+  if (w[i] > rest_w) return rec1(i + 1, rest_w); // 重量オーバーのためi番目を選ぶことができない。
+  return max(rec1(i, rest_w - w[i]) + v[i], // i番目を選びもう一度i番目を選ぶか選択する。
+             max(rec1(i + 1, rest_w - w[i]) + v[i], // i番目を選び次の品物へ。
+                 rec1(i + 1, rest_w))); // i番目をスキップ。
+}
+
+int solve1() {
+  return rec1(0, W);
+}
+
+////////////////////////////////////////
+// memoization
+////////////////////////////////////////
+const int MAX_W = 10000;
+int memo[MAX_N][MAX_W];
+
+int rec2(int i, int rest_w) {
+  if (memo[i][rest_w] > -1) return memo[i][rest_w]; // 計算済みの値。
+  int res;
+  if (i == n) res = 0;
+  if (w[i] > rest_w)
+    res = rec1(i + 1, rest_w); // 重量オーバーのためi番目を選ぶことができない。
+  else
+    res = max(rec1(i, rest_w - w[i]) + v[i], // i番目を選びもう一度i番目を選ぶか選択する。
+              max(rec1(i + 1, rest_w - w[i]) + v[i], // i番目を選び次の品物へ。
+                  rec1(i + 1, rest_w))); // i番目をスキップ。
+  return memo[i][rest_w] = res;
+}
+
+int solve2() {
+  memset(memo, -1, sizeof(memo));
+  return rec2(0, W);
+}
+
+////////////////////////////////////////
+// DP (O(n*W))
+////////////////////////////////////////
+int dp[MAX_N + 1][MAX_W];
+
+int solve3() {
+  for (int i = n - 1; i >= 0; i--) {
+    for (int j = 0; j <= W; j++) {
+      if (w[i] > j) {
+        dp[i][j] = dp[i+1][j]; 
+      } else {
+        dp[i][j] = max(dp[i][j - w[i]] + v[i],
+                       max(dp[i + 1][j - w[i]] + v[i],
+                           dp[i + 1][j]));
+      }
+    }
+  }
+  return dp[0][W];
 }
 
 int main() {
   read();
-  printf("%d\n", rec(0, W));
+  //printf("%d\n", solve1());
+  //printf("%d\n", solve2());
+  printf("%d\n", solve3());
   return 0;
 }
