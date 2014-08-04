@@ -60,11 +60,22 @@ int solve2() {
   return rec;
 }
 
+int dp3[MAX_N];
+
+// O(n log n)
+int solve3() {
+  fill(dp3, dp3 + n, INF);
+  for (int i = 0; i < n; i++) {
+    *lower_bound(dp3, dp3 + n, a[i]) = a[i];
+  }
+  return lower_bound(dp3, dp3 + n, INF) - dp3;
+}
 
 int main() {
   read();
   //  printf("result is >> %d\n", solve1());
-  printf("result is >> %d\n", solve2());
+  // printf("result is >> %d\n", solve2());
+  printf("result is >> %d\n", solve3());
   return 0;
 }
 
