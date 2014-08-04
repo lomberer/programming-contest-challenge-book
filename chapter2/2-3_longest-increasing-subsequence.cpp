@@ -21,27 +21,50 @@ void read() {
 }
 
 // dp[i] := a[i]が最後になるような増加部分列の長さ
-int dp[MAX_N + 1]; 
+int dp1[MAX_N + 1]; 
 
 // O(n^2)
 int solve1() {
   int res = 0;
   for (int i = 0; i < n; i++) {
-    dp[i] = 1;
+    dp1[i] = 1;
     for (int j = 0; j < i; j++) {
       if (a[i] > a[j]) {
-        dp[i] = max(dp[i], dp[j] + 1);
+        dp1[i] = max(dp1[i], dp1[j] + 1);
       }
     }
-    res = max(res, dp[i]);
+    res = max(res, dp1[i]);
   }
   return res;
+}
+
+// dp[i] := 長さi+1の増加部分列の最終要素の最小値(存在しない場合はINF)
+int dp2[MAX_N + 1];
+const int INF = 10^7;
+// O(n^2)
+int solve2() {
+  fill(dp2, dp2 + MAX_N + 1, INF);
+  dp2[0] = a[0];
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j <= i; j++) {
+      if (j == 0 || dp2[j - 1] < a[i]) {
+        dp2[j] = min(dp2[j], a[i]);
+      }
+    }
+  }
+  int rec = 0;
+  for (int i = 0; i < MAX_N + 1; i++) {
+    if (dp2[i] == INF) break;
+    rec++;
+  }
+  return rec;
 }
 
 
 int main() {
   read();
-  printf("result is >> %d\n", solve1());
+  //  printf("result is >> %d\n", solve1());
+  printf("result is >> %d\n", solve2());
   return 0;
 }
 
