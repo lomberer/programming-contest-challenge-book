@@ -7,6 +7,7 @@
 using namespace std;
 
 const int N_MAX = 100;
+const int K_MAX = 1000000;
 int n;
 int a[N_MAX];
 int m[N_MAX];
@@ -45,13 +46,36 @@ bool rec(int i, int k) {
   return ret;
 }
 
-bool solve() {
+// O(2^(a[1] + .. + a[n]))
+bool solve1() {
   return rec(0, 0);
+}
+
+int dp[K_MAX + 1];
+
+bool solve2() {
+  memset(dp, -1, sizeof(dp));
+  dp[0] = 0;
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j <= K; j++ ) {
+      if (dp[j] >= 0) {
+        dp[j] = m[i];
+      } else if (a[i] > j || dp[j - a[i]] <= 0) {
+        dp[j] = -1;
+      } else {
+        dp[j] = dp[j - a[i]] - 1;
+      }
+    } 
+  }
+  for (int i = 0; i <= K; i++) printf("%d ", dp[i]);
+  putchar('\n');
+  return (dp[K] >= 0);
 }
 
 int main() {
   read();
-  solve() ? printf("YES") : printf("NO");
+  //solve1() ? printf("YES") : printf("NO");
+  solve2() ? printf("YES") : printf("NO");
   putchar('\n');
   return 0;
 }
